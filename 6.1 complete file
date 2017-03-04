@@ -1,0 +1,46 @@
+1.Find the top five kinds of GoogleKnowle
+ge_Occupation people who were guests in the 
+show, in a particular time period.
+Take the time period as 1/11/99 to 6/11/99 i.e., 6 months
+
+Solution : 
+
+file1 = load '/user/dailyshow' using PigStorage(',') As  (year:chararray,occupation:chararray,date:chararray,group:chararray,gusetlist:chararray);
+ 
+
+file2 = foreach file1 generate occupation,date;
+ 
+file3 = foreach file2 generate occupation,ToDate(date,'MM/dd/yy') as date;
+ 
+file4 = filter file3 by ((date> ToDate('1/11/99','MM/dd/yy')) AND (date<ToDate('6/11/99','MM/dd/yy')));
+ 
+file5 = group file4 by occupation;
+file6 = foreach file5 generate group, COUNT(file4) as count;
+ 
+file7 = order file6 by count desc;
+ 
+file8 = limit file7 5;
+
+dump file8;
+
+-------------------------------------------------------------------
+
+
+2.Find the number of Google Knowledge occupation types in each group, who have been 
+guests on the s
+how.
+
+Solution :
+
+fil1 = load '/user/dailyshow' using PigStorage(',') as (year:chararray,occupation:chararray,date:chararray,grup:chararray,gusetlist:chararray);
+
+fil2 = foreach fil1 generate occupation,grup;
+
+fil3 = group fil2 by grup;
+
+fil4 = foreach fil3 generate group, COUNT(fil2) as count;
+
+fil5 = order fil4 by count desc;
+
+dump fil5;
+
